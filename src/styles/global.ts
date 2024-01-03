@@ -13,12 +13,15 @@ export const GlobalStyle = createGlobalStyle`
 
   :focus-visible {
     outline: 0;
-    box-shadow: 0 0 0 2px ${(p) => p.theme['green-500']};
+    box-shadow: 0 0 0 2px ${(props) => props.theme['green-500']};
   }
 
   body {
-    background-color: ${(p) => p.theme['gray-900']};
-    color: ${(p) => p.theme['gray-300']};
+    background-color: ${(props) => props.theme['gray-900']};
+    color: ${(props) => props.theme['gray-300']};
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body, input, textarea, button {

@@ -8,6 +8,10 @@ export const HistoryContainer = styled.main`
 
   padding: 5.6rem;
 
+  @media (max-width: 768px) {
+    padding: 2.8rem 0;
+  }
+
   h1 {
     font-size: 2.4rem;
     color: ${(props) => props.theme['gray-100']};
@@ -26,6 +30,7 @@ export const HistoryList = styled.div`
 
   &::-webkit-scrollbar {
     width: 10px;
+    height: 10px;
   }
 
   &::-webkit-scrollbar-track {
@@ -36,6 +41,10 @@ export const HistoryList = styled.div`
     background: ${(props) => props.theme['gray-300']};
     border: 4px solid ${(props) => props.theme['gray-800']};
     border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    max-height: calc(100vh - 25rem);
   }
 
   table {
@@ -91,7 +100,7 @@ export const HistoryList = styled.div`
 export type StatusType = 'in-progress' | 'interrupted' | 'concluded'
 
 interface StatusProps {
-  type: StatusType
+  $type: StatusType
 }
 
 const statusConfig = {
@@ -110,33 +119,31 @@ const statusConfig = {
 } as Record<StatusType, { bgColor: string; content: string }>
 
 export const Status = styled.span<StatusProps>`
-  &[type='${(props) => props.type}'] {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  position: relative;
+
+  white-space: nowrap;
+
+  &::before {
+    content: '';
 
     position: relative;
 
-    white-space: nowrap;
+    width: 0.8rem;
+    height: 0.8rem;
 
-    &::before {
-      content: '';
+    border-radius: 50%;
 
-      position: relative;
+    background-color: ${(props) =>
+      props.theme[statusConfig[props.$type].bgColor]};
+  }
 
-      width: 0.8rem;
-      height: 0.8rem;
+  &::after {
+    content: '${(props) => statusConfig[props.$type].content}';
 
-      border-radius: 50%;
-
-      background-color: ${(props) =>
-        props.theme[statusConfig[props.type].bgColor]};
-    }
-
-    &::after {
-      content: '${(props) => statusConfig[props.type].content}';
-
-      position: relative;
-    }
+    position: relative;
   }
 `

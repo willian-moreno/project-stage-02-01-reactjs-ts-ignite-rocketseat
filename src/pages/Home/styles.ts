@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const HomeContainer = styled.main`
   display: flex;
@@ -100,7 +100,20 @@ export const Separator = styled.div`
 export type CountdownButtonVariant = 'primary' | 'danger'
 
 interface CountdownButtonProps {
-  variant: CountdownButtonVariant
+  $variant: CountdownButtonVariant
+}
+
+const btnConfig = {
+  primary: {
+    bgColor: 'green-500',
+    color: 'gray-100',
+    bgColorHover: 'green-700',
+  },
+  danger: {
+    bgColor: 'red-500',
+    color: 'gray-100',
+    bgColorHover: 'red-700',
+  },
 }
 
 export const CountdownButton = styled.button<CountdownButtonProps>`
@@ -123,23 +136,14 @@ export const CountdownButton = styled.button<CountdownButtonProps>`
     color 0.15s ease,
     background-color 0.15s ease;
 
-  &[variant='primary'] {
-    background-color: ${(props) => props.theme['green-500']};
-    color: ${(props) => props.theme['gray-100']};
+  ${({ $variant, theme }) => css`
+    background-color: ${theme[btnConfig[$variant].bgColor]};
+    color: ${theme[btnConfig[$variant].color]};
 
     &:not(:disabled):hover {
-      background-color: ${(props) => props.theme['green-700']};
+      background-color: ${theme[btnConfig[$variant].bgColorHover]};
     }
-  }
-
-  &[variant='danger'] {
-    background-color: ${(props) => props.theme['red-500']};
-    color: ${(props) => props.theme['gray-100']};
-
-    &:not(:disabled):hover {
-      background-color: ${(props) => props.theme['red-700']};
-    }
-  }
+  `}
 
   &:disabled {
     opacity: 0.7;

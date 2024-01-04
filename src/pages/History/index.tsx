@@ -22,9 +22,7 @@ export function History() {
                   <td>20 minutos</td>
                   <td>Há cerca de 2 min</td>
                   <td>
-                    <Status type="in-progress" />
-                    <Status type="concluded" />
-                    <Status type="interrupted" />
+                    <Status $type="concluded" />
                   </td>
                 </tr>
               )

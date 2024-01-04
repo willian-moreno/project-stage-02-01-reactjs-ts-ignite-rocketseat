@@ -1,5 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { HandPalm, Play } from 'phosphor-react'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as zod from 'zod'
 import {
   CountdownButton,
   CountdownContainer,
@@ -10,44 +13,48 @@ import {
   TaskInput,
 } from './styles'
 
+const newCycleFormValidationSchema = zod.object({
+  task: zod.string().min(1, 'Informe o nome da tarefa'),
+  minutesAmount: zod
+    .number()
+    .min(5, 'O valor deve ser de no mínimo 5 minutos')
+    .max(60, 'O valor deve ser no máximo 60 minutos'),
+})
+
+type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
+
 export function Home() {
-  const [task, setTask] = useState('')
-  const [minutesAmount, setMinutesAmount] = useState(0)
+  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
+    resolver: zodResolver(newCycleFormValidationSchema),
+    defaultValues: {
+      task: '',
+      minutesAmount: 5,
+    },
+  })
+
   const [countdownStarted, setCountdownStarted] = useState(true)
 
-  const isCountdownDisabled = [!task, minutesAmount < 0].includes(true)
+  const task = watch('task')
+  const minutesAmount = watch('minutesAmount')
+  const isSubmitDisabled = !task || minutesAmount < 5 || minutesAmount > 60
 
-  function handleCountdown(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-  }
-
-  function handleNewTask(event: ChangeEvent<HTMLInputElement>) {
-    setTask(event.target.value)
-  }
-
-  function handleNewMinutesAmount(event: ChangeEvent<HTMLInputElement>) {
-    const value = +event.target.value
-    const newValue = value > 60 ? 60 : value < 0 ? 0 : value
-
-    setMinutesAmount(newValue)
-  }
-
-  function handleToggleCountdownStatus() {
-    setCountdownStarted((state) => !state)
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    console.log(data)
+    setCountdownStarted(true)
+    reset()
   }
 
   return (
     <HomeContainer>
-      <form onSubmit={handleCountdown}>
+      <form onSubmit={handleSubmit(handleCreateNewCycle)}>
         <FormContainer>
           <label htmlFor="task">Vou trabalhar em</label>
           <TaskInput
             type="text"
             id="task"
-            value={task}
             placeholder="Dê um nome para o seu projeto"
             list="task-suggestions"
-            onChange={handleNewTask}
+            {...register('task')}
           />
 
           <datalist id="task-suggestions">
@@ -58,12 +65,11 @@ export function Home() {
           <MinutesAmountInput
             type="number"
             id="minutesAmount"
-            value={minutesAmount}
             placeholder="00"
             min={5}
             max={60}
             step={5}
-            onChange={handleNewMinutesAmount}
+            {...register('minutesAmount', { valueAsNumber: true })}
           />
 
           <span>minutos.</span>
@@ -81,18 +87,13 @@ export function Home() {
           <CountdownButton
             type="submit"
             $variant="primary"
-            disabled={isCountdownDisabled}
-            onClick={handleToggleCountdownStatus}
+            disabled={isSubmitDisabled}
           >
             <Play size={24} />
             Começar
           </CountdownButton>
         ) : (
-          <CountdownButton
-            type="submit"
-            $variant="danger"
-            onClick={handleToggleCountdownStatus}
-          >
+          <CountdownButton type="submit" $variant="danger">
             <HandPalm size={24} />
             Interromper
           </CountdownButton>

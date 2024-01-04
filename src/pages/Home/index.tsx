@@ -1,5 +1,5 @@
 import { HandPalm, Play } from 'phosphor-react'
-import { FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import {
   CountdownButton,
   CountdownContainer,
@@ -11,26 +11,43 @@ import {
 } from './styles'
 
 export function Home() {
+  const [task, setTask] = useState('')
+  const [minutesAmount, setMinutesAmount] = useState(0)
   const [countdownStarted, setCountdownStarted] = useState(true)
 
-  function handleToggleStowatchStatus() {
-    setCountdownStarted((state) => !state)
+  const isCountdownDisabled = [!task, minutesAmount < 0].includes(true)
+
+  function handleCountdown(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
   }
 
-  function handleStowatch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  function handleNewTask(event: ChangeEvent<HTMLInputElement>) {
+    setTask(event.target.value)
+  }
+
+  function handleNewMinutesAmount(event: ChangeEvent<HTMLInputElement>) {
+    const value = +event.target.value
+    const newValue = value > 60 ? 60 : value < 0 ? 0 : value
+
+    setMinutesAmount(newValue)
+  }
+
+  function handleToggleCountdownStatus() {
+    setCountdownStarted((state) => !state)
   }
 
   return (
     <HomeContainer>
-      <form onSubmit={handleStowatch}>
+      <form onSubmit={handleCountdown}>
         <FormContainer>
           <label htmlFor="task">Vou trabalhar em</label>
           <TaskInput
             type="text"
             id="task"
+            value={task}
             placeholder="Dê um nome para o seu projeto"
             list="task-suggestions"
+            onChange={handleNewTask}
           />
 
           <datalist id="task-suggestions">
@@ -41,10 +58,12 @@ export function Home() {
           <MinutesAmountInput
             type="number"
             id="minutesAmount"
+            value={minutesAmount}
             placeholder="00"
             min={5}
             max={60}
             step={5}
+            onChange={handleNewMinutesAmount}
           />
 
           <span>minutos.</span>
@@ -61,8 +80,9 @@ export function Home() {
         {countdownStarted ? (
           <CountdownButton
             type="submit"
-            variant="primary"
-            onClick={handleToggleStowatchStatus}
+            $variant="primary"
+            disabled={isCountdownDisabled}
+            onClick={handleToggleCountdownStatus}
           >
             <Play size={24} />
             Começar
@@ -70,8 +90,8 @@ export function Home() {
         ) : (
           <CountdownButton
             type="submit"
-            variant="danger"
-            onClick={handleToggleStowatchStatus}
+            $variant="danger"
+            onClick={handleToggleCountdownStatus}
           >
             <HandPalm size={24} />
             Interromper

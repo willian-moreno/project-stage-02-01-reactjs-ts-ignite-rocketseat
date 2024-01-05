@@ -97,12 +97,6 @@ export const HistoryList = styled.div`
 `
 
 /** ------------- Status ------------- */
-export type StatusType = 'in-progress' | 'interrupted' | 'concluded'
-
-interface StatusProps {
-  $type: StatusType
-}
-
 const statusConfig = {
   'in-progress': {
     bgColor: 'yellow-500',
@@ -116,7 +110,13 @@ const statusConfig = {
     bgColor: 'green-500',
     content: 'Concluído',
   },
-} as Record<StatusType, { bgColor: string; content: string }>
+}
+
+export type StatusType = keyof typeof statusConfig
+
+interface StatusProps {
+  $type: StatusType
+}
 
 export const Status = styled.span<StatusProps>`
   display: flex;

@@ -59,10 +59,18 @@ export const TaskInput = styled(BaseInput)`
   &::-webkit-calendar-picker-indicator {
     display: none !important;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `
 
 export const MinutesAmountInput = styled(BaseInput)`
   width: 6.4rem;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `
 
 export const CountdownContainer = styled.div`
@@ -97,14 +105,8 @@ export const Separator = styled.div`
   overflow: hidden;
 `
 
-export type CountdownButtonVariant = 'primary' | 'danger'
-
-interface CountdownButtonProps {
-  $variant: CountdownButtonVariant
-}
-
 const btnConfig = {
-  primary: {
+  success: {
     bgColor: 'green-500',
     color: 'gray-100',
     bgColorHover: 'green-700',
@@ -114,6 +116,12 @@ const btnConfig = {
     color: 'gray-100',
     bgColorHover: 'red-700',
   },
+}
+
+export type CountdownButtonVariant = keyof typeof btnConfig
+
+interface CountdownButtonProps {
+  $variant: CountdownButtonVariant
 }
 
 export const CountdownButton = styled.button<CountdownButtonProps>`

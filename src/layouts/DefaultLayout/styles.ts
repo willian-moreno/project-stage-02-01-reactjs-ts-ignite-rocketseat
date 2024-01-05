@@ -16,6 +16,28 @@ export const LayoutContainer = styled.div`
 
   border-radius: 8px;
 
+  opacity: 0;
+
+  animation:
+    default-layout-fade-in 0.45s forwards,
+    default-layout-slide-y-in 0.25s forwards;
+
+  @keyframes default-layout-fade-in {
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes default-layout-slide-y-in {
+    0% {
+      transform: translateY(-10vh);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
   @media (max-width: 768px) {
     & {
       height: calc(100vh - 2rem);

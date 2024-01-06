@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 
-export type UpdateableCycleData = {
+export type UpdatableCycleData = {
   interruptedDate?: Date
   finishedDate?: Date
 }
@@ -16,7 +16,7 @@ export type Cycle = {
   statedDate: Date
   task: string
   minutesAmount: number
-} & UpdateableCycleData
+} & UpdatableCycleData
 
 interface CyclesContextType {
   cycles: Cycle[]
@@ -24,7 +24,7 @@ interface CyclesContextType {
   activeCycle: Cycle | undefined
   activeCycleId: string | null
   setActiveCycleId: Dispatch<React.SetStateAction<string | null>>
-  updateActiveCycle: (newData: UpdateableCycleData) => void
+  updateActiveCycle: (newData: UpdatableCycleData) => void
 }
 
 export const CyclesContext = createContext({} as CyclesContextType)
@@ -36,7 +36,7 @@ export function CyclesContextProvider(props: { children: ReactNode }) {
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   const updateActiveCycle = useCallback(
-    (newData: UpdateableCycleData) => {
+    (newData: UpdatableCycleData) => {
       if (!activeCycleId) return
 
       setCycles((state) =>

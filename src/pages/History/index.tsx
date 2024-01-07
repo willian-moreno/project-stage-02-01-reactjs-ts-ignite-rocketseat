@@ -1,6 +1,37 @@
-import { HistoryContainer, HistoryList, Status } from './styles'
+import { HistoryContainer, HistoryList, Status, StatusType } from './styles'
+import { useContext } from 'react'
+import { CyclesContext, Cycle } from '../../contexts/CyclesContextProvider'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 export function History() {
+  const { cycles } = useContext(CyclesContext)
+  const historyCycles = cycles.map((cycle) => {
+    return {
+      status: defineCycleStatus(cycle),
+      startedDateDistanceToNow: startedDateDistanceToNow(cycle.startedDate),
+      ...cycle,
+    }
+  })
+
+  function startedDateDistanceToNow(startedDate: Date) {
+    return formatDistanceToNow(startedDate, { locale: ptBR, addSuffix: true })
+  }
+
+  function defineCycleStatus(cycle: Cycle): StatusType {
+    const { finishedDate, interruptedDate } = cycle
+
+    if (!finishedDate && !interruptedDate) {
+      return 'in-progress'
+    }
+
+    if (interruptedDate) {
+      return 'interrupted'
+    }
+
+    return 'concluded'
+  }
+
   return (
     <HistoryContainer>
       <h1>Meu histórico</h1>
@@ -15,18 +46,26 @@ export function History() {
             </tr>
           </thead>
           <tbody>
-            {[...Array(10)].map((_, index) => {
-              return (
-                <tr key={index}>
-                  <td>Tarefa</td>
-                  <td>20 minutos</td>
-                  <td>Há cerca de 2 min</td>
-                  <td>
-                    <Status $type="concluded" />
-                  </td>
-                </tr>
-              )
-            })}
+            {historyCycles.map(
+              ({
+                id,
+                task,
+                minutesAmount,
+                startedDateDistanceToNow,
+                status,
+              }) => {
+                return (
+                  <tr key={id}>
+                    <td>{task}</td>
+                    <td>{minutesAmount} minutos</td>
+                    <td>{startedDateDistanceToNow}</td>
+                    <td>
+                      <Status $type={status} />
+                    </td>
+                  </tr>
+                )
+              },
+            )}
           </tbody>
         </table>
       </HistoryList>

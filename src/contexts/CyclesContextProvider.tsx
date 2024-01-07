@@ -19,7 +19,7 @@ export type UpdatableCycleData = {
 
 export type Cycle = {
   id: string
-  statedDate: Date
+  startedDate: Date
   task: string
   minutesAmount: number
 } & UpdatableCycleData
@@ -75,7 +75,7 @@ export function CyclesContextProvider({
       id,
       task,
       minutesAmount,
-      statedDate: now,
+      startedDate: now,
     }
 
     setActiveCycleId(id)

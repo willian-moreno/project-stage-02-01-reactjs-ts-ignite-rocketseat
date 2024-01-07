@@ -28,5 +28,12 @@ export const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', 'Arial', sans-serif;
     font-weight: 400;
     font-size: 1.6rem;
-  } 
+  }
+  
+  #root {
+    display: flex;
+    flex-direction: column;
+    
+    min-height: 100vh;
+  }
 `

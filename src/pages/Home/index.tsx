@@ -23,8 +23,6 @@ export function Home() {
 
   const { activeCycle, interruptActiveCycle, createNewCycle } = cyclesContext
 
-  console.log('cyclesContext', createNewCycle)
-
   const newCycleForm = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {

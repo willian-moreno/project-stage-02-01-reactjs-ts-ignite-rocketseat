@@ -6,7 +6,9 @@ export const HistoryContainer = styled.main`
   flex-direction: column;
   flex: 1;
 
-  padding: 5.6rem;
+  height: calc(100% - 4.8rem);
+
+  padding: 1.6rem 5.6rem 0;
 
   @media (max-width: 768px) {
     padding: 2.8rem 0;
@@ -21,8 +23,6 @@ export const HistoryContainer = styled.main`
 /** ------------- HistoryList ------------- */
 export const HistoryList = styled.div`
   flex: 1;
-
-  max-height: calc(100vh - 42rem);
 
   margin-top: 3.2rem;
 
@@ -41,10 +41,6 @@ export const HistoryList = styled.div`
     background: ${(props) => props.theme['gray-300']};
     border: 4px solid ${(props) => props.theme['gray-800']};
     border-radius: 2px;
-  }
-
-  @media (max-width: 768px) {
-    max-height: calc(100vh - 25rem);
   }
 
   table {

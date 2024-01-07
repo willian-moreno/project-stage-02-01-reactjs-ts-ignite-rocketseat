@@ -10,8 +10,9 @@ export const LayoutContainer = styled.div`
   width: 118.4rem;
   max-height: calc(100vh - 2rem);
   height: calc(100vh - 16rem);
+  min-height: 56rem;
 
-  margin: 8rem auto;
+  margin: auto;
   padding: 4rem;
 
   border-radius: 8px;
@@ -35,13 +36,6 @@ export const LayoutContainer = styled.div`
 
     100% {
       transform: translateY(0);
-    }
-  }
-
-  @media (max-width: 768px) {
-    & {
-      height: calc(100vh - 2rem);
-      margin: 1rem auto;
     }
   }
 `

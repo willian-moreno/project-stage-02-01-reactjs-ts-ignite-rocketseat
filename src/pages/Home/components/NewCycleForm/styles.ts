@@ -5,7 +5,7 @@ export const FormContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  flex-wrap: wrap;
+  flex-wrap: wrap !important;
 
   width: 100%;
 

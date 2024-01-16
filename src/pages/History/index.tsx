@@ -1,8 +1,9 @@
-import { HistoryContainer, HistoryList, Status, StatusType } from './styles'
-import { useContext } from 'react'
-import { CyclesContext, Cycle } from '../../contexts/CyclesContextProvider'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useContext } from 'react'
+import { CyclesContext } from '../../contexts/CyclesContextProvider'
+import { Cycle } from '../../reducers/cycles/reducer'
+import { HistoryContainer, HistoryList, Status, StatusType } from './styles'
 
 export function History() {
   const { cycles } = useContext(CyclesContext)
@@ -15,7 +16,10 @@ export function History() {
   })
 
   function startedDateDistanceToNow(startedDate: Date) {
-    return formatDistanceToNow(startedDate, { locale: ptBR, addSuffix: true })
+    return formatDistanceToNow(new Date(startedDate), {
+      locale: ptBR,
+      addSuffix: true,
+    })
   }
 
   function defineCycleStatus(cycle: Cycle): StatusType {

@@ -1,40 +1,26 @@
+import { ReactNode, createContext, useEffect, useReducer } from 'react'
 import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useCallback,
-  useState,
-} from 'react'
+  createNewCycleAction,
+  finishActiveCycleAction,
+  interruptActiveCycleAction,
+} from '../reducers/cycles/actions'
+import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
 
 interface CreateCycleData {
   task: string
   minutesAmount: number
 }
 
-export type UpdatableCycleData = {
-  interruptedDate?: Date
-  finishedDate?: Date
-}
-
-export type Cycle = {
-  id: string
-  startedDate: Date
-  task: string
-  minutesAmount: number
-} & UpdatableCycleData
-
 interface CyclesContextType {
   cycles: Cycle[]
   activeCycle: Cycle | undefined
   activeCycleId: string | null
-  defineActiveCycleId: Dispatch<React.SetStateAction<string | null>>
-  updateActiveCycle: (newData: UpdatableCycleData) => void
   createNewCycle: (
     onValid: CreateCycleData,
     onInvalid?: CreateCycleData,
   ) => void
   interruptActiveCycle: () => void
+  finishActiveCycle: () => void
 }
 
 export const CyclesContext = createContext({} as CyclesContextType)
@@ -46,27 +32,33 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [cyclesState, dispatchCycles] = useReducer(
+    cyclesReducer,
+    {
+      cycles: [],
+      activeCycleId: null,
+    },
+    (initialState) => {
+      const storedStateAsJSON = localStorage.getItem(
+        '@ignite-timer:cycles-state-1.0.0',
+      )
+
+      if (storedStateAsJSON) {
+        return JSON.parse(storedStateAsJSON)
+      }
+
+      return initialState
+    },
+  )
+
+  useEffect(() => {
+    const cyclesStateAsJSON = JSON.stringify(cyclesState)
+    localStorage.setItem('@ignite-timer:cycles-state-1.0.0', cyclesStateAsJSON)
+  }, [cyclesState])
+
+  const { cycles, activeCycleId } = cyclesState
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  const updateActiveCycle = useCallback(
-    (newData: UpdatableCycleData) => {
-      if (!activeCycleId) return
-
-      setCycles((state) =>
-        state.map((cycle) => {
-          if (cycle.id === activeCycleId) {
-            return { ...cycle, ...newData }
-          }
-
-          return cycle
-        }),
-      )
-    },
-    [activeCycleId, setCycles],
-  )
 
   function createNewCycle({ task, minutesAmount }: CreateCycleData) {
     const now = new Date()
@@ -78,18 +70,23 @@ export function CyclesContextProvider({
       startedDate: now,
     }
 
-    setActiveCycleId(id)
-    setCycles((state) => [newCycle, ...state])
+    dispatchCycles(createNewCycleAction(newCycle))
   }
 
   function interruptActiveCycle() {
+    if (!activeCycleId) return
+
     document.title = 'Ignite Timer'
-    updateActiveCycle({ interruptedDate: new Date() })
-    setActiveCycleId(null)
+
+    dispatchCycles(interruptActiveCycleAction())
   }
 
-  function defineActiveCycleId(value: SetStateAction<string | null>) {
-    setActiveCycleId(value)
+  function finishActiveCycle() {
+    if (!activeCycleId) return
+
+    document.title = 'Ignite Timer'
+
+    dispatchCycles(finishActiveCycleAction())
   }
 
   return (
@@ -98,10 +95,9 @@ export function CyclesContextProvider({
         cycles,
         activeCycle,
         activeCycleId,
-        defineActiveCycleId,
-        updateActiveCycle,
         createNewCycle,
         interruptActiveCycle,
+        finishActiveCycle,
       }}
     >
       {children}
